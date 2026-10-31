@@ -12,7 +12,7 @@ Built strictly according to the **Brightloop Subscription Management System (BSM
 ```bash
 npm run dev
 ```
-Open **[http://localhost:3000](http://localhost:3000)** in your browser.
+Open **[http://localhost:3000](http://localhost:3001)** in your browser.
 
 ### 2. Database Synchronization & Seeding (Pre-configured)
 The database has already been initialized and populated with comprehensive enterprise demo data:
