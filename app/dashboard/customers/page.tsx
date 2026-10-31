@@ -11,9 +11,14 @@ export default async function CustomersPage() {
     redirect('/dashboard');
   }
 
-  const customers = await prisma.customer.findMany({
-    orderBy: { createdAt: 'desc' },
-  });
+  let customers;
+  try {
+    customers = await prisma.customer.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+  } catch {
+    throw new Error('Customer data is temporarily unavailable. Please try again.');
+  }
 
   return (
     <div className="space-y-6">

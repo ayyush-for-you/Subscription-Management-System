@@ -2,7 +2,7 @@
   "name": "@brightloop/web",
   "private": true,
   "scripts": {
-    "dev": "vite --host 0.0.0.0",
+    "dev": "vite --host 0.0.0.0 --port 5173 --strictPort",
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b --pretty false",
     "lint": "node -e \"console.log('Web lint: no rules configured in foundation phase')\""

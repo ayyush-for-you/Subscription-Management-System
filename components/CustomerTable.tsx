@@ -3,19 +3,33 @@
 import Link from 'next/link';
 import { Edit, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function CustomerTable({ customers }: { customers: any[] }) {
   const router = useRouter();
+  const [error, setError] = useState('');
 
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure you want to delete this customer?')) return;
 
-    await fetch(`/api/customers/${id}`, { method: 'DELETE' });
-    router.refresh();
+    try {
+      const response = await fetch(`/api/customers/${id}`, { method: 'DELETE' });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Failed to archive customer');
+      setError('');
+      router.refresh();
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : 'Failed to archive customer');
+    }
   };
 
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
+      {error && (
+        <div role="alert" className="border-b border-red-200 bg-red-50 px-6 py-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
@@ -48,8 +62,9 @@ export default function CustomerTable({ customers }: { customers: any[] }) {
               <td className="px-6 py-4 whitespace-nowrap text-sm">
                 <div className="flex space-x-2">
                   <Link
-                    href={`/dashboard/customers/${customer.id}/edit`}
+                    href={`/dashboard/customers/${customer.id}`}
                     className="text-blue-600 hover:text-blue-800"
+                    aria-label={`View ${customer.name}`}
                   >
                     <Edit className="w-4 h-4" />
                   </Link>

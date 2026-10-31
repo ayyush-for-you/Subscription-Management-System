@@ -2,7 +2,8 @@ import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { format } from 'date-fns';
-import { ArrowLeft, Printer } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
+import PrintButton from '@/components/PrintButton';
 
 export default async function InvoiceDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -32,13 +33,7 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
             <p className="text-gray-600 mt-1">Invoice Details</p>
           </div>
         </div>
-        <button
-          onClick={() => window.print()}
-          className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-        >
-          <Printer className="w-4 h-4 mr-2" />
-          Print
-        </button>
+        <PrintButton />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

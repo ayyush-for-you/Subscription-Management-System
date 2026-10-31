@@ -8,10 +8,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const data = await request.json();
-  
-  const customer = await prisma.customer.create({
-    data: {
+  try {
+    const data = await request.json();
+    const required = ['name', 'email'];
+    if (required.some((field) => !String(data[field] || '').trim())) {
+      return NextResponse.json({ error: 'Name and email are required' }, { status: 400 });
+    }
+
+    const customer = await prisma.customer.create({
+      data: {
       name: data.name,
       email: data.email,
       phone: data.phone,
@@ -22,8 +27,15 @@ export async function POST(request: NextRequest) {
       country: data.country,
       customerType: data.customerType,
       status: data.status || 'active',
-    },
-  });
+      },
+    });
 
-  return NextResponse.json(customer);
+    return NextResponse.json(customer, { status: 201 });
+  } catch (error: any) {
+    if (error?.code === 'P2002') {
+      return NextResponse.json({ error: 'A customer with that email already exists' }, { status: 409 });
+    }
+    console.error('Failed to create customer', error);
+    return NextResponse.json({ error: 'Unable to create customer' }, { status: 500 });
+  }
 }
