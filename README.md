@@ -108,3 +108,4 @@ The system includes pre-configured accounts with instant 1-click login buttons o
 ## 🛡️ Transactional Idempotency & Billing Integrity (FR-4.2 & NFR-3)
 
 The automated billing engine (`src/lib/billing-engine.ts`) runs within atomic transactions (`prisma.$transaction`) and computes an execution cycle key `(subscription_id, billing_period)`. If an invoice has already been generated for the current cycle, the engine skips duplicate generation to guarantee zero duplicate billing.
+
