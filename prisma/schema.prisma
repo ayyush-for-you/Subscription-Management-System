@@ -1,0 +1,284 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   // admin, staff, customer
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  customer  Customer?
+}
+
+model Customer {
+  id           Int      @id @default(autoincrement())
+  userId       Int?     @unique
+  user         User?    @relation(fields: [userId], references: [id])
+  name         String
+  email        String   @unique
+  phone        String?
+  company      String?
+  address      String?
+  city         String?
+  state        String?
+  country      String?
+  customerType String?
+  status       String   @default("active")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  quotations    Quotation[]
+  subscriptions Subscription[]
+  invoices      Invoice[]
+  payments      Payment[]
+}
+
+model Product {
+  id         Int              @id @default(autoincrement())
+  name       String
+  type       String
+  salesPrice Float
+  costPrice  Float?
+  notes      String?
+  status     String           @default("active")
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  variants          ProductVariant[]
+  quotationLines    QuotationLine[]
+  subscriptionLines SubscriptionLine[]
+}
+
+model ProductVariant {
+  id              Int     @id @default(autoincrement())
+  productId       Int
+  product         Product @relation(fields: [productId], references: [id])
+  name            String
+  additionalPrice Float
+  status          String  @default("active")
+
+  @@index([productId])
+}
+
+model SubscriptionPlan {
+  id                  Int       @id @default(autoincrement())
+  name                String
+  description         String?
+  price               Float
+  billingFrequency    String    // daily, weekly, monthly, yearly
+  minimumQuantity     Int       @default(1)
+  availabilityStart   DateTime?
+  availabilityEnd     DateTime?
+  autoClose           Boolean   @default(false)
+  allowEarlyClosure   Boolean   @default(true)
+  allowPause          Boolean   @default(true)
+  allowRenewal        Boolean   @default(true)
+  status              String    @default("active")
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  quotations    Quotation[]
+  subscriptions Subscription[]
+}
+
+model Quotation {
+  id         Int       @id @default(autoincrement())
+  number     String    @unique
+  customerId Int
+  customer   Customer  @relation(fields: [customerId], references: [id])
+  planId     Int?
+  plan       SubscriptionPlan? @relation(fields: [planId], references: [id])
+  subtotal   Float     @default(0)
+  taxAmount  Float     @default(0)
+  discount   Float     @default(0)
+  total      Float     @default(0)
+  expiryDate DateTime?
+  status     String    @default("draft") // draft, sent, accepted, rejected
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  lines QuotationLine[]
+
+  @@index([customerId])
+  @@index([planId])
+}
+
+model QuotationLine {
+  id          Int       @id @default(autoincrement())
+  quotationId Int
+  quotation   Quotation @relation(fields: [quotationId], references: [id])
+  productId   Int
+  product     Product   @relation(fields: [productId], references: [id])
+  quantity    Int
+  unitPrice   Float
+  taxRate     Float     @default(0)
+  discount    Float     @default(0)
+  total       Float
+
+  @@index([quotationId])
+  @@index([productId])
+}
+
+model Subscription {
+  id               Int              @id @default(autoincrement())
+  number           String           @unique
+  customerId       Int
+  customer         Customer         @relation(fields: [customerId], references: [id])
+  planId           Int
+  plan             SubscriptionPlan @relation(fields: [planId], references: [id])
+  startDate        DateTime
+  expiryDate       DateTime?
+  billingFrequency String
+  paymentTerms     String?
+  subtotal         Float            @default(0)
+  taxAmount        Float            @default(0)
+  discount         Float            @default(0)
+  total            Float            @default(0)
+  nextBillingDate  DateTime?
+  status           String           @default("draft") // draft, quotation, confirmed, active, paused, closed
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  lines    SubscriptionLine[]
+  invoices Invoice[]
+
+  @@index([customerId])
+  @@index([planId])
+}
+
+model SubscriptionLine {
+  id             Int          @id @default(autoincrement())
+  subscriptionId Int
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
+  productId      Int
+  product        Product      @relation(fields: [productId], references: [id])
+  quantity       Int
+  unitPrice      Float
+  taxRate        Float        @default(0)
+  discount       Float        @default(0)
+  total          Float
+
+  @@index([subscriptionId])
+  @@index([productId])
+}
+
+model Invoice {
+  id               Int          @id @default(autoincrement())
+  number           String       @unique
+  customerId       Int
+  customer         Customer     @relation(fields: [customerId], references: [id])
+  subscriptionId   Int?
+  subscription     Subscription? @relation(fields: [subscriptionId], references: [id])
+  invoiceDate      DateTime
+  dueDate          DateTime
+  billingPeriodStart DateTime?
+  billingPeriodEnd   DateTime?
+  subtotal         Float        @default(0)
+  taxAmount        Float        @default(0)
+  discount         Float        @default(0)
+  total            Float        @default(0)
+  amountPaid       Float        @default(0)
+  outstanding      Float        @default(0)
+  status           String       @default("draft") // draft, confirmed, paid, partially_paid, overdue, cancelled
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  lines    InvoiceLine[]
+  payments Payment[]
+
+  @@index([customerId])
+  @@index([subscriptionId])
+}
+
+model InvoiceLine {
+  id        Int     @id @default(autoincrement())
+  invoiceId Int
+  invoice   Invoice @relation(fields: [invoiceId], references: [id])
+  description String
+  quantity  Int
+  unitPrice Float
+  taxRate   Float   @default(0)
+  discount  Float   @default(0)
+  total     Float
+
+  @@index([invoiceId])
+}
+
+model Payment {
+  id                 Int      @id @default(autoincrement())
+  reference          String   @unique
+  customerId         Int
+  customer           Customer @relation(fields: [customerId], references: [id])
+  invoiceId          Int?
+  invoice            Invoice? @relation(fields: [invoiceId], references: [id])
+  amount             Float
+  paymentMethod      String   // cash, bank_transfer, upi, card, cheque, other
+  paymentDate        DateTime
+  transactionRef     String?
+  notes              String?
+  createdAt          DateTime @default(now())
+
+  @@index([customerId])
+  @@index([invoiceId])
+}
+
+model Tax {
+  id          Int     @id @default(autoincrement())
+  name        String
+  type        String  // percentage, fixed
+  value       Float
+  description String?
+  isDefault   Boolean @default(false)
+  status      String  @default("active")
+}
+
+model Discount {
+  id               Int       @id @default(autoincrement())
+  name             String
+  code             String    @unique
+  type             String    // percentage, fixed
+  value            Float
+  minimumPurchase  Float?
+  minimumQuantity  Int?
+  startDate        DateTime?
+  endDate          DateTime?
+  maxUses          Int?
+  currentUses      Int       @default(0)
+  applicableProducts String? // JSON array of product IDs
+  status           String    @default("active")
+  createdAt        DateTime  @default(now())
+
+  usages DiscountUsage[]
+}
+
+model DiscountUsage {
+  id         Int      @id @default(autoincrement())
+  discountId Int
+  discount   Discount @relation(fields: [discountId], references: [id])
+  customerId Int
+  usedAt     DateTime @default(now())
+
+  @@index([discountId])
+}
+
+model CompanySetting {
+  id            Int     @id @default(autoincrement())
+  companyName   String
+  email         String?
+  phone         String?
+  address       String?
+  logo          String?
+  currency      String  @default("INR")
+  invoicePrefix String  @default("INV")
+  subPrefix     String  @default("SUB")
+  defaultTaxId  Int?
+}

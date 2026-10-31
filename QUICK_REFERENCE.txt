@@ -1,0 +1,93 @@
+═══════════════════════════════════════════════════════════════
+    SUBSCRIPTION MANAGEMENT SYSTEM - QUICK REFERENCE
+═══════════════════════════════════════════════════════════════
+
+🌐 APPLICATION URL
+───────────────────────────────────────────────────────────────
+   http://localhost:3002
+
+🔐 LOGIN CREDENTIALS
+───────────────────────────────────────────────────────────────
+   ADMIN (Full Access)
+   • Email: admin@brightloop.com
+   • Password: Admin@123
+
+   STAFF (Operations)
+   • Email: staff@brightloop.com
+   • Password: Staff@123
+
+   CUSTOMER (Portal)
+   • Email: customer@example.com
+   • Password: Customer@123
+
+📋 MAIN FEATURES
+───────────────────────────────────────────────────────────────
+   ✓ Dashboard with KPIs & Charts
+   ✓ Customer Management (CRUD)
+   ✓ Product & Variants
+   ✓ Subscription Plans
+   ✓ Quotations
+   ✓ Subscriptions (Full Lifecycle)
+   ✓ Invoices (Auto-generation)
+   ✓ Payments (Multiple Methods)
+   ✓ Tax Management (GST)
+   ✓ Discounts & Promotions
+   ✓ Recurring Billing
+   ✓ Reports & Analytics
+   ✓ Customer Portal
+   ✓ Staff Management
+   ✓ Company Settings
+
+🎯 KEY WORKFLOWS
+───────────────────────────────────────────────────────────────
+   1. Create Customer → Create Subscription → Activate
+   2. Recurring Billing → Generate Invoice → Record Payment
+   3. Dashboard → View KPIs → Check Reports
+
+⚡ QUICK ACTIONS
+───────────────────────────────────────────────────────────────
+   Run Recurring Billing:
+   Login as Admin → Dashboard → Billing → "Run Billing Now"
+
+   View Customer Details:
+   Dashboard → Customers → Click Customer Name
+
+   Check Outstanding:
+   Dashboard → Reports → View Outstanding Revenue
+
+   Print Invoice:
+   Dashboard → Invoices → Click Invoice → Print Button
+
+💾 DEMO DATA
+───────────────────────────────────────────────────────────────
+   • 10 Customers
+   • 8 Products
+   • 5 Plans
+   • 15 Subscriptions
+   • 10 Invoices
+   • 8 Payments
+   • 3 Discounts
+
+📊 TECH STACK
+───────────────────────────────────────────────────────────────
+   • Next.js 14 + TypeScript
+   • Prisma + SQLite
+   • Tailwind CSS
+   • Recharts
+
+🚀 COMMANDS
+───────────────────────────────────────────────────────────────
+   Start Server:    npm run dev
+   Seed Database:   node prisma/seed.js
+   View Database:   npx prisma studio
+   Build:           npm run build
+
+📁 KEY FILES
+───────────────────────────────────────────────────────────────
+   • README.md         - Full documentation
+   • DEPLOYMENT.md     - Testing checklist
+   • PROJECT_SUMMARY.md - Complete overview
+   • prisma/schema.prisma - Database schema
+
+✅ STATUS: FULLY FUNCTIONAL & READY FOR DEMO
+═══════════════════════════════════════════════════════════════

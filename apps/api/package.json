@@ -1,0 +1,37 @@
+{
+  "name": "@brightloop/api",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "node -e \"console.log('API lint: no rules configured in foundation phase')\"",
+    "test": "vitest run",
+    "test:integration": "vitest run",
+    "test:story": "vitest run",
+    "seed": "tsx src/seeds/large.ts",
+    "seed:demo": "tsx src/seeds/demo.ts",
+    "bench": "tsx src/benchmarks/run.ts"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^9.3.1",
+    "@fastify/cors": "^9.0.1",
+    "@fastify/swagger": "^8.14.0",
+    "bcryptjs": "^2.4.3",
+    "fastify": "^4.26.2",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^6.9.13",
+    "pg": "^8.11.5",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^20.11.30",
+    "@types/nodemailer": "^6.4.14",
+    "@types/pg": "^8.11.5",
+    "tsx": "^4.7.2",
+    "typescript": "^5.4.3",
+    "vitest": "^1.4.0",
+    "eslint": "^8.57.0"
+  }
+}

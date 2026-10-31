@@ -1,0 +1,28 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: brightloop
+          POSTGRES_USER: brightloop
+          POSTGRES_PASSWORD: brightloop
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U brightloop -d brightloop"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      DATABASE_URL: postgresql://brightloop:brightloop@localhost:5432/brightloop
+      JWT_SECRET: ci-only-secret-that-is-long-enough-for-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: 20, cache: npm}
+      - run: npm ci
+      - run: psql "$DATABASE_URL" -f infra/postgres/init/001-schema.sql
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run test
